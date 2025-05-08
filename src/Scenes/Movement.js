@@ -27,34 +27,34 @@ class Movement extends Phaser.Scene {
         // Reset state
         this.gameOver = false;
         this.score = 0;
-        this.scoreText?.destroy(); // Remove old text if restarting
+        this.scoreText?.destroy(); 
     
-        // Destroy all previous game objects
+        
         for (let group of [my.bullets, my.bPlanes, my.eBullets, my.health, my.greenPlanes || []]) {
             for (let obj of group) {
                 obj.destroy();
             }
         }
     
-        // Clear arrays
+        
         my.bullets = [];
         my.bPlanes = [];
         my.eBullets = [];
         my.health = [];
         my.greenPlanes = [];
     
-        // Destroy and remove end screen if still present
+        
         this.endOverlay?.destroy();
         this.endText?.destroy();
         this.scoreSummary?.destroy();
         this.retryPrompt?.destroy();
     
-        // Reset wave
+        
         this.currentWave = 0;
         this.maxWaves = 5;
         this.enemiesLeft = 0;
     
-        // Set up keys
+        
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
@@ -65,23 +65,20 @@ class Movement extends Phaser.Scene {
         this.boomS = this.sound.add("boom");
 
     
-        // Player
         my.sprite.player = this.add.sprite(this.bodyX, this.bodyY, "red");
     
-        // Health
+        
         for (let i = 0; i < 3; i++) {
             let hp = this.add.sprite(30 + i * 50, 30, "health");
             hp.setScale(3);
             my.health.push(hp);
         }
     
-        // Score
         this.scoreText = this.add.text(600, 10, "Score: 0", {
             fontSize: "28px",
             fill: "#FF0000"
         });
     
-        // Start wave
         this.startNextWave();
     }    
 
@@ -94,25 +91,21 @@ class Movement extends Phaser.Scene {
             return;
         }
 
-        // Stop gameplay logic if game is over
         if (this.gameOver) return;
 
-        // Player movement
         if (this.keyD.isDown && my.sprite.player.x < 780) {
             my.sprite.player.x += 10;
         }
         if (this.keyA.isDown && my.sprite.player.x > 20) {
             my.sprite.player.x -= 10;
         }
-
-        // Player shooting
+        
         if (Phaser.Input.Keyboard.JustDown(this.spaceBar)) {
             let bullet = this.add.sprite(my.sprite.player.x, my.sprite.player.y - 10, "blaster");
             my.bullets.push(bullet);
             this.laserS.play();
         }
 
-        // Player bullet movement and collisions
         for (let i = my.bullets.length - 1; i >= 0; i--) {
             let bullet = my.bullets[i];
             bullet.y -= 15;
@@ -142,7 +135,6 @@ class Movement extends Phaser.Scene {
             }
         }
 
-        // Blue plane movement
         for (let i = my.bPlanes.length - 1; i >= 0; i--) {
             let bluePlane = my.bPlanes[i];
             bluePlane.y += 6;
@@ -157,7 +149,6 @@ class Movement extends Phaser.Scene {
             }
         }
 
-        // Enemy bullet movement and collisions
         for (let i = my.eBullets.length - 1; i >= 0; i--) {
             let eBullet = my.eBullets[i];
             eBullet.x += eBullet.velocity?.x || 0;
@@ -182,7 +173,6 @@ class Movement extends Phaser.Scene {
             }
         }
 
-        // Bullet collision with green planes
         for (let i = my.bullets.length - 1; i >= 0; i--) {
             let bullet = my.bullets[i];
             for (let j = (my.greenPlanes || []).length - 1; j >= 0; j--) {
@@ -255,7 +245,6 @@ class Movement extends Phaser.Scene {
         this.my.greenPlanes = this.my.greenPlanes || [];
         this.my.greenPlanes.push(greenPlane);
 
-        // Fire at player every 1.7 seconds
         greenPlane.fireTimer = this.time.addEvent({
             delay: 1700,
             callback: () => {
@@ -291,7 +280,6 @@ class Movement extends Phaser.Scene {
         let blueCount = this.currentWave * 2;
         let greenCount = this.currentWave;
 
-        // Spawn blue planes
         for (let i = 0; i < blueCount; i++) {
             this.time.delayedCall(i * 500, () => {
                 if (this.gameOver) return;
@@ -316,7 +304,6 @@ class Movement extends Phaser.Scene {
             });
         }
 
-        // Spawn green planes
         for (let i = 0; i < greenCount; i++) {
             this.time.delayedCall(i * 800, () => {
                 if (this.gameOver) return;
